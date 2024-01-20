@@ -28,6 +28,8 @@ func (l *LRU) Add(key, data string) {
 	if ok {
 		node := v.(*Node)
 		node.Data = data
+		l.cache.Store(key, data)
+		l.invertedCache.Store(key, data)
 		return
 	}
 	node := l.list.Append(data)
