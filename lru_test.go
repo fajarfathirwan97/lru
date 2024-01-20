@@ -2,9 +2,9 @@ package list
 
 import (
 	"fmt"
-	"github.com/gofiber/fiber/v2/log"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func BenchmarkLRU(b *testing.B) {
@@ -15,7 +15,6 @@ func BenchmarkLRU(b *testing.B) {
 		lru.Add(key, data)
 		lru.Get(key)
 	}
-	log.Debug("LRU LEN", lru.Len())
 }
 func TestLRU(t *testing.T) {
 	lru := NewLRU(10)

@@ -1,9 +1,6 @@
 package list
 
-import (
-	"github.com/gofiber/fiber/v2/log"
-	"github.com/segmentio/encoding/json"
-)
+import "log"
 
 type DoublyLinkedList struct {
 	len  int64
@@ -140,15 +137,8 @@ func (d *DoublyLinkedList) Search(node *Node, data string) string {
 
 func (d *DoublyLinkedList) Debug() {
 	nextNode := d.Head
-	marshal, err := json.Marshal(d)
-	if err != nil {
-		return
-	}
-	log.Debug("HEAD: ", d.Head)
-	log.Debug("TAIL: ", d.Tail)
-	log.Debug(string(marshal))
 	for nextNode != nil {
-		log.Debug(nextNode)
+		log.Println(nextNode)
 		nextNode = nextNode.next
 	}
 }
