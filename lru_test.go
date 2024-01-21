@@ -2,9 +2,8 @@ package list
 
 import (
 	"fmt"
-	"testing"
-
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func BenchmarkLRU(b *testing.B) {

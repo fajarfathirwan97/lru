@@ -8,12 +8,9 @@ type DoublyLinkedList struct {
 	Tail *Node `json:"Tail"`
 }
 
-func (d *DoublyLinkedList) Prepend(data string) *Node {
+func (d *DoublyLinkedList) Append(data string) *Node {
 	if d.Head == nil && d.Tail == nil {
-		d.Head = &Node{Data: data}
-		d.Tail = d.Head
-		d.len++
-		return d.Head
+		return d.Add(data)
 	}
 	newNode := &Node{Data: data, prev: d.Tail}
 	d.Tail.next = newNode
@@ -21,12 +18,9 @@ func (d *DoublyLinkedList) Prepend(data string) *Node {
 	d.len++
 	return newNode
 }
-func (d *DoublyLinkedList) Append(data string) *Node {
+func (d *DoublyLinkedList) Prepend(data string) *Node {
 	if d.Head == nil && d.Tail == nil {
-		d.Head = &Node{Data: data}
-		d.Tail = d.Head
-		d.len++
-		return d.Head
+		return d.Add(data)
 	}
 	newNode := &Node{Data: data, next: d.Head}
 	d.Head.prev = newNode
@@ -35,10 +29,10 @@ func (d *DoublyLinkedList) Append(data string) *Node {
 	return newNode
 }
 func (d *DoublyLinkedList) Add(data string) *Node {
+	d.len++
 	if d.Head == nil && d.Tail == nil {
 		d.Head = &Node{Data: data}
 		d.Tail = d.Head
-		d.len++
 		return d.Tail
 	} else {
 		return d.Prepend(data)
@@ -49,44 +43,39 @@ func (d *DoublyLinkedList) RemoveAtNode(node *Node) {
 	if node.prev != nil {
 		node.prev.next = node.next
 	} else {
-		d.Head = node.next
+		d.RemoveHead()
 	}
 	if node.next != nil {
 		node.next.prev = node.prev
 	} else {
-		d.Tail = node.prev
+		d.RemoveTail()
 	}
 	node.next = nil
 	node.prev = nil
-	d.len--
 }
 func (d *DoublyLinkedList) Remove(data string) {
 	if d.Head == nil || d.Tail == nil {
 		return
 	}
 	if d.Tail.Data == data {
-		d.removeTail()
+		d.RemoveTail()
 		return
 	}
 	if d.Head.Data == data {
-		d.removeHead()
+		d.RemoveHead()
 		return
 	}
 	node := d.SearchNode(d.Head, data)
-	node.prev.next = node.next
-	node.next.prev = node.prev
-	node.next = nil
-	node.prev = nil
-	d.len--
+	d.RemoveAtNode(node)
 }
 
-func (d *DoublyLinkedList) removeTail() {
+func (d *DoublyLinkedList) RemoveTail() {
 	d.Tail = d.Tail.prev
 	d.Tail.next = nil
 	d.len--
 }
 
-func (d *DoublyLinkedList) removeHead() {
+func (d *DoublyLinkedList) RemoveHead() {
 	d.Head = d.Head.next
 	d.Head.prev = nil
 	d.len--
@@ -99,7 +88,13 @@ func (d *DoublyLinkedList) Update(old, new string) (*Node, bool) {
 	}
 	return nil, false
 }
-func (d *DoublyLinkedList) InsertAt(index int64, data string) *Node {
+func (d *DoublyLinkedList) InsertAtNode(node *Node, data string) *Node {
+	newNode := &Node{Data: data, next: node.next, prev: node}
+	node.next.prev = newNode
+	node.next = newNode
+	return newNode
+}
+func (d *DoublyLinkedList) InsertAtIndex(index int64, data string) *Node {
 	if index == 0 {
 		return d.Prepend(data)
 	}
@@ -110,9 +105,7 @@ func (d *DoublyLinkedList) InsertAt(index int64, data string) *Node {
 	for i := int64(0); i < index-1; i++ {
 		node = node.next
 	}
-	newNode := &Node{Data: data, next: node.next, prev: node}
-	node.next = newNode
-	node.next.prev = newNode
+	newNode := d.InsertAtNode(node, data)
 	d.len++
 	return newNode
 }
@@ -134,12 +127,13 @@ func (d *DoublyLinkedList) Search(node *Node, data string) string {
 	}
 	return ""
 }
-
 func (d *DoublyLinkedList) Debug() {
 	nextNode := d.Head
 	for nextNode != nil {
 		log.Println(nextNode)
 		nextNode = nextNode.next
 	}
+	log.Println(d.len, "LENGT")
+	log.Println("============")
 }
 func (d *DoublyLinkedList) Len() int64 { return d.len }
